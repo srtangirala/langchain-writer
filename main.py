@@ -8,15 +8,18 @@ from langchain.tools import Tool
 import os
 
 # Set your Anthropic API key
-os.environ["ANTHROPIC_API_KEY"] = "<your_anthropic_api_key>"
-os.environ["SERPAPI_API_KEY"] = "<your_serpapi_api_key>"
+anthropic_api_key = os.environ.get("ANTHROPIC_API_KEY")
+serpapi_api_key = os.environ.get("SERPAPI_API_KEY")
+
+if not anthropic_api_key or not serpapi_api_key:
+    raise ValueError("Please set ANTHROPIC_API_KEY and SERPAPI_API_KEY environment variables")
 
 # Initialize the LLMs for all agents
 researcher_llm = ChatAnthropic(model="claude-3-5-sonnet-20241022")
 writer_llm = ChatAnthropic(model="claude-3-5-sonnet-20241022")
 plagiarism_llm = ChatAnthropic(model="claude-3-5-sonnet-20241022")
 
-search = SerpAPIWrapper(serpapi_api_key=os.environ["SERPAPI_API_KEY"])  # Add your SerpAPI key here
+search = SerpAPIWrapper(serpapi_api_key=serpapi_api_key)  # Use the environment variable
 search_tool = Tool(
     name="Search",
     func=search.run,
